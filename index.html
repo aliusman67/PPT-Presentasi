@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riset Komprehensif: Active Directory — Presentasi Interaktif</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Bar progres & kontrol global -->
+<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="hud">
+  <button class="hud-btn" id="btnOverview" title="Daftar slide (Esc)">☰<span> Slide</span></button>
+  <button class="hud-btn" id="btnFull" title="Layar penuh (F)">⛶</button>
+</div>
+
+<main class="deck" id="deck">
+
+  <!-- ════════ 1 · JUDUL ════════ -->
+  <section class="slide slide-hero" data-title="Judul">
+    <div class="hero-bg" aria-hidden="true">
+      <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+      <div class="net" id="heroNet"></div>
+    </div>
+    <div class="slide-inner hero-inner">
+      <p class="eyebrow" data-reveal>🛡️ Riset Infrastruktur &amp; Keamanan TI</p>
+      <h1 data-reveal>Active<br><span class="grad">Directory</span></h1>
+      <p class="hero-sub" data-reveal>Riset komprehensif: arsitektur, protokol autentikasi,
+        vektor serangan, dan strategi <em>hardening</em>.</p>
+      <div class="chips" data-reveal>
+        <span class="chip">Otentikasi</span>
+        <span class="chip">Otorisasi</span>
+        <span class="chip">Manajemen Kebijakan</span>
+      </div>
+      <p class="hint" data-reveal>
+        <kbd>→</kbd> / <kbd>Space</kbd> lanjut &nbsp;·&nbsp; <kbd>Esc</kbd> daftar slide &nbsp;·&nbsp; <kbd>F</kbd> layar penuh
+      </p>
+    </div>
+  </section>
+
+  <!-- ════════ 2 · PENDAHULUAN ════════ -->
+  <section class="slide" data-title="Pendahuluan">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">01 · Pendahuluan</span>
+        <h2 data-reveal>Apa itu Active Directory?</h2></header>
+      <div class="cols">
+        <div class="col" data-reveal>
+          <p class="lead"><strong>Active Directory (AD)</strong> adalah layanan direktori
+            <em>proprietary</em> Microsoft untuk Windows Server — pusat penyimpanan data terstruktur
+            mengenai seluruh entitas jaringan: pengguna, komputer, grup, aplikasi, dan perangkat keras.</p>
+          <ul class="ticks">
+            <li><strong>Otentikasi</strong> — memverifikasi identitas.</li>
+            <li><strong>Otorisasi</strong> — menentukan hak akses.</li>
+            <li><strong>Kebijakan</strong> — manajemen terpusat dari satu titik.</li>
+          </ul>
+        </div>
+        <div class="col analogy" data-reveal>
+          <h3>📒 Analogi</h3>
+          <p>AD adalah <strong>“buku telepon digital terenkripsi”</strong> — administrator mengelola
+            identitas &amp; hak akses secara konsisten dari satu titik pusat.</p>
+          <div class="phonebook" id="phonebook">
+            <div class="pb-row"><span class="pb-type">👤 User</span> john.doe <em>Domain: corp.contoso.com</em></div>
+            <div class="pb-row"><span class="pb-type">🖥️ Computer</span> WS-FINANCE-01 <em>OU: Workstations</em></div>
+            <div class="pb-row"><span class="pb-type">🖨️ Printer</span> HP-MPA01 <em>Site: Jakarta</em></div>
+            <div class="pb-row"><span class="pb-type">👥 Group</span> Tier0-Admins <em>Scope: Global</em></div>
+          </div>
+          <p class="mini">✦ Setiap objek memiliki <em>attributes</em> yang dapat dicari (LDAP query).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 3 · ARSITEKTUR LOGIS ════════ -->
+  <section class="slide" data-title="Arsitektur Logis">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">02 · Arsitektur — Komponen Logis</span>
+        <h2 data-reveal>Hierarki Logis AD <span class="tag-live">● klik nodanya</span></h2></header>
+      <div class="cols tree-cols">
+        <div class="col" data-reveal>
+          <ul class="tree" id="adTree">
+            <li><button class="node lv-forest" data-info="forest">🌳 Forest <small>tingkat tertinggi</small></button>
+              <ul>
+                <li><button class="node lv-domain" data-info="tree">🌲 Domain Tree <small>corp.contoso.com</small></button>
+                  <ul>
+                    <li><button class="node lv-domain" data-info="child">↳ Child Domain <small>finance.corp.contoso.com</small></button></li>
+                  </ul>
+                </li>
+                <li><button class="node lv-domain" data-info="domain2">🌲 Domain <small>otherdomain.com</small></button></li>
+              </ul>
+            </li>
+            <li><button class="node lv-domain open-target" data-info="domain">🏷️ Domain <small>corp.contoso.com — batas administrasi &amp; keamanan</small></button>
+              <ul>
+                <li><button class="node lv-ou" data-info="ou">📁 OU “Users” <small>kontainer hierarkis</small></button>
+                  <ul>
+                    <li><button class="node lv-obj" data-info="user">👤 User — john.doe</button></li>
+                    <li><button class="node lv-obj" data-info="group">👥 Group — HelpDesk</button></li>
+                  </ul>
+                </li>
+                <li><button class="node lv-ou" data-info="ou">📁 OU “Servers”</button>
+                  <ul><li><button class="node lv-obj" data-info="computer">🖥️ Computer — DC01</button></li></ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <p class="mini hint-fold">Klik ⊕/⊖ untuk melipat cabang · klik node untuk membaca definisinya →</p>
+        </div>
+        <aside class="col info-panel" id="treeInfo" data-reveal>
+          <h3 id="tiTitle">Pilih sebuah node</h3>
+          <p id="tiBody">Setiap komponen logis punya peran spesifik — dari <em>Objects</em> sebagai unit
+            dasar hingga <em>Forest</em> sebagai puncak hierarki yang berbagi Schema, Configuration Partition,
+            dan Global Catalog.</p>
+          <div class="info-foot" id="tiFoot"></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 4 · ARSITEKTUR FISIK ════════ -->
+  <section class="slide" data-title="Arsitektur Fisik">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">02 · Arsitektur — Komponen Fisik</span>
+        <h2 data-reveal>Komponen Fisik AD</h2></header>
+      <div class="phys-grid">
+        <article class="card" data-reveal>
+          <div class="card-ic">🗄️</div>
+          <h3>Domain Controller (DC)</h3>
+          <p>Server yang menjalankan layanan <strong>AD DS</strong>, menyimpan salinan database AD,
+            dan menangani proses otentikasi.</p>
+          <div class="dc-anim"><div class="dc-rack"><i></i><i></i><i></i><i></i></div>
+            <div class="dc-pulse"></div></div>
+        </article>
+        <article class="card" data-reveal>
+          <div class="card-ic">📍</div>
+          <h3>Sites</h3>
+          <p>Pengelompokan <strong>fisik</strong> berdasarkan satu atau lebih subnet IP —
+            mengoptimalkan lalu lintas replikasi AD.</p>
+          <ul class="subnets">
+            <li><b>Site-JKT</b> 10.0.1.0/24</li>
+            <li><b>Site-SBY</b> 10.0.2.0/24</li>
+            <li><b>Site-SG</b> 172.16.0.0/22</li>
+          </ul>
+        </article>
+        <article class="card" data-reveal>
+          <div class="card-ic">🗃️</div>
+          <h3>AD Database — NTDS.dit</h3>
+          <p>Berkas database fisik berisi seluruh objek &amp; hash. Klik untuk menyalin lokasinya:</p>
+          <button class="term" id="ntdsPath">%SystemRoot%\NTDS\ntds.dit</button>
+          <p class="mini" id="ntdsNote">💡 proteksi NTDS.dit = proteksi seluruh domain</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 5 · LAYANAN AD ════════ -->
+  <section class="slide" data-title="Layanan AD">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">03 · Komponen Layanan Utama</span>
+        <h2 data-reveal>Satu “AD”, Lima Layanan <span class="tag-live">● pilih tab</span></h2></header>
+      <div class="svc-wrap" data-reveal>
+        <nav class="svc-tabs" id="svcTabs">
+          <button class="svc-tab active" data-svc="ds"><b>AD DS</b><span>Domain Services</span></button>
+          <button class="svc-tab" data-svc="lds"><b>AD LDS</b><span>Lightweight DS</span></button>
+          <button class="svc-tab" data-svc="cs"><b>AD CS</b><span>Certificate Services</span></button>
+          <button class="svc-tab" data-svc="rms"><b>AD RMS</b><span>Rights Management</span></button>
+          <button class="svc-tab" data-svc="fs"><b>AD FS</b><span>Federation Services</span></button>
+        </nav>
+        <div class="svc-panes" id="svcPanes">
+          <div class="svc-pane active" data-svc="ds">
+            <h3>🧱 Active Directory Domain Services</h3>
+            <p>Inti dari semuanya: <strong>menyimpan data jaringan</strong> dan mengelola interaksi
+              pengguna dengan domain. Otentikasi, otorisasi, replikasi, GPO — semua lewat AD DS.</p>
+            <div class="svc-bar"><span>Penyimpanan</span><span>Otentikasi</span><span>Replikasi</span><span>GPO</span></div>
+          </div>
+          <div class="svc-pane" data-svc="lds">
+            <h3>🪶 Active Directory Lightweight Directory Services</h3>
+            <p>Layanan direktori <strong>independen berbasis LDAP</strong> — ringan, bisa beberapa
+              instance dalam satu server, tanpa perlu jadi Domain Controller.</p>
+            <div class="svc-bar"><span>LDAP murni</span><span>Multi-instance</span><span>Untuk aplikasi</span></div>
+          </div>
+          <div class="svc-pane" data-svc="cs">
+            <h3>🔐 Active Directory Certificate Services</h3>
+            <p>Infrastruktur kunci publik (<strong>PKI</strong>) untuk menerbitkan sertifikat digital:
+              HTTPS internal, smart card, signing, enkripsi email.</p>
+            <div class="svc-bar"><span>CA</span><span>Sertifikat</span><span>PKI</span><span>Smartcard</span></div>
+          </div>
+          <div class="svc-pane" data-svc="rms">
+            <h3>📜 Active Directory Rights Management Services</h3>
+            <p>Manajemen hak akses <strong>dokumen</strong> (DRM): larang cetak, forward, atau buka
+              file di luar organisasi — bahkan setelah file dikirimin.</p>
+            <div class="svc-bar"><span>Doc lockdown</span><span>No forward</span><span>Ekspor dibatasi</span></div>
+          </div>
+          <div class="svc-pane" data-svc="fs">
+            <h3>🌐 Active Directory Federation Services</h3>
+            <p>Layanan identitas <strong>federasi</strong> dan <em>Single Sign-On</em> (SSO) —
+              jembatan ON-PREM ↔ cloud (contoh: SSO ke M365/Entra ID).</p>
+            <div class="svc-bar"><span>SSO</span><span>Trust antar-org</span><span>Token claims</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 6 · FSMO ════════ -->
+  <section class="slide" data-title="FSMO Roles">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">04 · Konsep Kunci Operasional</span>
+        <h2 data-reveal>FSMO Roles — 5 Kursi Singleton <span class="tag-live">● klik peran</span></h2></header>
+      <p class="mini center" data-reveal>Hanya boleh dijalankan <strong>satu DC</strong> pada satu waktu per cakupan.</p>
+      <div class="fmso-cols">
+        <div class="fmso-scope forest" data-reveal>
+          <h3>🌳 Forest-wide <small>1 per forest</small></h3>
+          <button class="fmso-role" data-role="schema">Schema Master</button>
+          <button class="fmso-role" data-role="dnaming">Domain Naming Master</button>
+        </div>
+        <div class="fmso-scope domain" data-reveal>
+          <h3>🏷️ Domain-wide <small>1 per domain</small></h3>
+          <button class="fmso-role" data-role="pdc">PDC Emulator</button>
+          <button class="fmso-role" data-role="rid">RID Master</button>
+          <button class="fmso-role" data-role="infra">Infrastructure Master</button>
+        </div>
+      </div>
+      <div class="fmso-detail" id="fmsoDetail" data-reveal>
+        <span class="dim">Klik salah satu peran untuk melihat fungsinya…</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 7 · GPO LSDOU ════════ -->
+  <section class="slide" data-title="GPO · LSDOU">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">04 · Group Policy Object</span>
+        <h2 data-reveal>Urutan Eksekusi GPO: <span class="lsdou">L S D O U</span>
+          <button class="btn play" id="gpoPlay">▶ Putar urutan</button></h2></header>
+      <div class="gpo-pipe" id="gpoPipe" data-reveal>
+        <div class="gpo-stage" data-i="0"><b>L</b><span>Local Policy</span><em class="gpo-val"></em></div>
+        <div class="gpo-arrow">→</div>
+        <div class="gpo-stage" data-i="1"><b>S</b><span>Site</span><em class="gpo-val"></em></div>
+        <div class="gpo-arrow">→</div>
+        <div class="gpo-stage" data-i="2"><b>D</b><span>Domain</span><em class="gpo-val"></em></div>
+        <div class="gpo-arrow">→</div>
+        <div class="gpo-stage" data-i="3"><b>OU</b><span>Organizational Unit</span><em class="gpo-val"></em></div>
+      </div>
+      <div class="gpo-case" data-reveal>
+        <p class="mini">Skenario: kebijakan <code>Minimal password length</code> diset di 4 level —
+          siapa yang menang?</p>
+        <div class="gpo-result" id="gpoResult">Tekan ▶ untuk melihat proses evaluasi…</div>
+      </div>
+      <p class="mini dim" data-reveal>Pengecualian: GPO berstatus <strong>Enforced</strong> /
+        <strong>No Override</strong> dapat memenangkan perdebatan meski levelnya lebih awal.</p>
+    </div>
+  </section>
+
+  <!-- ════════ 8 · KERBEROS ════════ -->
+  <section class="slide" data-title="Kerberos">
+    <div class="slide-inner kerb-slide">
+      <header class="slide-head"><span class="kicker">05 · Protokol Autentikasi Utama</span>
+        <h2 data-reveal>Kerberos — Analogi Taman Bermain <span class="tag-live">● simulasi interaktif</span></h2></header>
+      <div class="kerb-layout">
+        <div class="kerb-scene" id="kerbScene" data-reveal aria-label="Simulasi Kerberos"></div>
+        <div class="kerb-side" data-reveal>
+          <div class="kerb-tagline" id="kerbProto"></div>
+          <h3 id="kerbTitle"></h3>
+          <p id="kerbText"></p>
+          <div class="kerb-dots" id="kerbDots"></div>
+          <div class="kerb-ctrl">
+            <button class="btn" id="kerbPrev">← Sebelumnya</button>
+            <button class="btn primary" id="kerbNext">Berikutnya →</button>
+            <button class="btn ghost" id="kerbReset">↺</button>
+            <button class="btn ghost" id="kerbAuto">▶▶ Auto</button>
+          </div>
+          <p class="mini">🔑 Inti: <strong>password tidak pernah melintasi jaringan</strong> —
+            yang berpindah hanya tiket yang ditandatangani KDC.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 9 · PROTOKOL LAIN ════════ -->
+  <section class="slide" data-title="Protokol Lain">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">05 · Protokol Pendukung &amp; Kelemahannya</span>
+        <h2 data-reveal>NTLM · LDAP · SMB <span class="tag-live">● coba tab</span></h2></header>
+      <div class="proto-tabs" id="protoTabs" data-reveal>
+        <button class="proto-tab active" data-proto="ntlm">NTLM</button>
+        <button class="proto-tab" data-proto="ldap">LDAP / LDAPS</button>
+        <button class="proto-tab" data-proto="smb">SMB</button>
+      </div>
+
+      <div class="proto-pane active" data-proto="ntlm" data-reveal>
+        <div class="cols">
+          <div class="col">
+            <h3>🪙 Challenge–Response <em>(legacy)</em></h3>
+            <p>Protokol warisan. Alurnya: server ngirim <strong>challenge</strong> acak, klien
+              menjawab dengan enkripsi berbasis <em>hash password</em>. Password utuh memang
+              nggak pernah dikirim — tapi jawabannya tetap bisa disalahgunakan lewat dua jalur:
+              hash-nya bisa dipakai langsung sebagai kunci (<strong>Pass-the-Hash</strong>), dan
+              jawabannya nggak terikat ke sesi tertentu sehingga bisa diteruskan ke server lain
+              (<strong>Relay</strong>). NTLMv1 wajib dimatikan; NTLM sepenuhnya cukup jadi
+              <em>fallback</em> saja.</p>
+            <div class="ntlm-demo">
+              <button class="btn small" id="ntlmBtn">🎲 Mulai challenge</button>
+              <div class="ntlm-out">
+                <div><span class="lbl">Server →</span> <code id="ntlmChallenge">—</code></div>
+                <div><span class="lbl">Client →</span> <code id="ntlmResp">—</code></div>
+              </div>
+            </div>
+          </div>
+          <div class="col warn-col">
+            <div class="warn-card">⚠️ NTLM = fallback. Matikan bila Kerberos tersedia penuh.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-pane" data-proto="ldap" data-reveal>
+        <div class="cols">
+          <div class="col">
+            <h3>📖 LDAP (389) vs 🔒 LDAPS (636)</h3>
+            <p>Protokol buat baca/tulis database AD. LDAP biasa (port 389) ngirim segalanya
+              dalam <strong>plaintext</strong> — termasuk kredensial. Nyalakan switch di bawah
+              dan lihat sendiri apa yang “tertangkap” sniffer di jaringan.</p>
+            <label class="switch-row">
+              <span>LDAP&nbsp;389</span>
+              <input type="checkbox" id="ldapTls">
+              <span class="slider"></span>
+              <span>LDAPS&nbsp;636</span>
+            </label>
+          </div>
+          <div class="col">
+            <h4>👁️ Tangkapan di jaringan (sniffer):</h4>
+            <div class="pkt" id="ldapPkt"></div>
+            <p class="mini" id="ldapVerdict"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-pane" data-proto="smb" data-reveal>
+        <div class="cols">
+          <div class="col">
+            <h3>📂 Server Message Block</h3>
+            <p>Protokol berbagi file &amp; printer — dan jalur distribusi Group Policy
+              (folder SYSVOL). Pilih versinya untuk melihat risikonya:</p>
+            <div class="smb-versions" id="smbVersions">
+              <button class="smb-v danger" data-v="1">SMBv1</button>
+              <button class="smb-v" data-v="2">SMBv2</button>
+              <button class="smb-v ok" data-v="3">SMBv3</button>
+            </div>
+            <div class="smb-verdict" id="smbVerdict"></div>
+          </div>
+          <div class="col warn-col">
+            <div class="warn-card danger">🔥 SMBv1 = lubang EternalBlue / WannaCry.
+              Nonaktifkan total, wajibkan <strong>SMB Signing = Require</strong>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 10 · SERANGAN ════════ -->
+  <section class="slide" data-title="Serangan Umum">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">06 · Common Attacks</span>
+        <h2 data-reveal>Serangan Umum pada AD <span class="tag-live">● klik kartu</span></h2></header>
+      <div class="atk-layout">
+        <div class="atk-grid" id="atkGrid"></div>
+        <aside class="atk-panel" id="atkPanel">
+          <div class="atk-empty">Pilih serangan di kiri untuk melihat<br><b>deskripsi · kenapa bisa terjadi · penangkal</b></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 11 · HARDENING ════════ -->
+  <section class="slide" data-title="Hardening">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">07 · Strategi Pengamanan</span>
+        <h2 data-reveal>Hardening Checklist <span class="tag-live">● nyalakan semua</span></h2></header>
+      <div class="hard-grid">
+        <label class="hard-card" data-reveal>
+          <input type="checkbox" class="hard-sw">
+          <div class="hard-body"><span class="card-ic">🏰</span>
+            <h3>Tiered Administration Model</h3>
+            <p>Pisahkan “kunci” berdasarkan kelas: <b>Tier 0</b> = DC · <b>Tier 1</b> = server ·
+              <b>Tier 2</b> = workstation. Admin Tier-0 nggak pernah login ke Tier-2 — sekali ada
+              workstation yang kena, hash admin DC nggak ikut ke-dump karena memang nggak pernah ada di sana.</p>
+          </div><span class="switch"></span>
+        </label>
+        <label class="hard-card" data-reveal>
+          <input type="checkbox" class="hard-sw">
+          <div class="hard-body"><span class="card-ic">🔁</span>
+            <h3>LAPS</h3>
+            <p>Masalah admin lokal: passwordnya biasanya sama di semua mesin dan jarang diganti.
+              <em>Local Administrator Password Solution</em> bikin tiap mesin punya password
+              <b>unik</b> + dirotasi otomatis — admin tinggal ambil nilainya lewat AD saat butuh.</p>
+          </div><span class="switch"></span>
+        </label>
+        <label class="hard-card" data-reveal>
+          <input type="checkbox" class="hard-sw">
+          <div class="hard-body"><span class="card-ic">🚫</span>
+            <h3>Nonaktifkan Protokol Legacy</h3>
+            <p>Matikan <b>NTLMv1</b>, <b>SMBv1</b>, dan <b>WDigest</b> (yang diam-diam nyimpen
+              password plaintext di LSASS), lalu wajibkan <b>SMB Signing = Require</b>.
+              Pintu-pintu lama ini justru yang paling sering dilewatin penyerang.</p>
+          </div><span class="switch"></span>
+        </label>
+        <label class="hard-card" data-reveal>
+          <input type="checkbox" class="hard-sw">
+          <div class="hard-body"><span class="card-ic">⚙️</span>
+            <h3>gMSA untuk Service Accounts</h3>
+            <p>Service Account itu target empuk karena passwordnya “di-set-lalu-dilupakan”.
+              <b>gMSA</b> bikin Windows yang ngelola: 240+ karakter acak, rotasi otomatis, dan
+              nggak ada manusia yang tahu — Kerberoasting pun jadi nggak ada gunanya.</p>
+          </div><span class="switch"></span>
+        </label>
+      </div>
+      <div class="score-row" data-reveal>
+        <div class="score-meter"><div class="score-fill" id="scoreFill"></div></div>
+        <div class="score-txt" id="scoreTxt">Skor hardening: 0 / 4</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 12 · KESIMPULAN ════════ -->
+  <section class="slide slide-end" data-title="Kesimpulan">
+    <div class="slide-inner">
+      <header class="slide-head"><span class="kicker">08 · Kesimpulan</span>
+        <h2 data-reveal>AD adalah <span class="grad">pilar identitas</span> — dan medan perang utama.</h2></header>
+      <ol class="takeaways" data-reveal>
+        <li>Pahami <strong>mekanisme Kerberos</strong>: tiket, bukan password, yang berpindah.</li>
+        <li>Kenali <strong>titik lemah tiap protokol</strong>: NTLM, LDAP plaintext, SMBv1.</li>
+        <li>Serangan AD mengeksploitasi <strong>fitur bawaan</strong> — bukan malware eksotis:
+          Kerberoasting, DCSync, Golden Ticket.</li>
+        <li>Bertahan dengan <strong>tiering + LAPS + gMSA + mati protokol legacy</strong>.</li>
+      </ol>
+      <p class="lead" data-reveal>Krusial untuk pertahanan era hibrida — <em>On-Premises</em> &amp;
+        <em>Entra ID</em>. 🎓</p>
+      <div class="end-ctrl" data-reveal>
+        <button class="btn primary" id="btnRestart">↺ Mulai dari awal</button>
+        <span class="dim">Sumber: active_directory_research.md</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer navigasi -->
+<footer class="foot">
+  <div class="foot-left"><b id="slideCounter">01</b> / <span id="slideTotal">12</span>
+    <span class="foot-title" id="slideTitle"></span></div>
+  <div class="foot-right">
+    <button class="nav-btn" id="btnPrev" aria-label="Sebelumnya">←</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="btnNext" aria-label="Berikutnya">→</button>
+  </div>
+</footer>
+
+<!-- Overlay daftar slide -->
+<div class="overview" id="overview" hidden>
+  <div class="ov-head"><h2>Daftar Slide</h2><button class="hud-btn" id="btnCloseOv">✕</button></div>
+  <div class="ov-grid" id="ovGrid"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
